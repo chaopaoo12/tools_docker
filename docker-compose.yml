@@ -1,0 +1,39 @@
+version: "3.3"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    hostname: postgres
+    restart: always
+    environment:
+        TZ: Asia/shanghai
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: root
+        POSTGRES_DB: superset
+    ports:
+      - 5432:5432
+    volumes:
+      - /root/PostgreSQL/data:/var/lib/postgresql/data
+    networks:
+      - superset_network
+
+  superset:
+    image: apache/superset:1.1.0
+    container_name: superset
+    hostname: superset
+    restart: always
+    environment:
+      TZ: Asia/shanghai
+    ports:
+      - 8080:8088
+    volumes:
+    # 导入配置文件
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+      - ./superset_config.py:/etc/superset/superset_config.py
+    networks:
+    - superset_network
+
+networks:
+  superset_network:
+    driver: bridge
